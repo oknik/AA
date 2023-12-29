@@ -6,13 +6,13 @@
 
 USING_NS_CC;
 /***************************************
-* ÅÚÌ¨µÄ»ùÀà£¬°üº¬ÁËËùÓĞÅÚÌ¨µÄ¹²Í¬ÌØĞÔ
+* ç‚®å°çš„åŸºç±»ï¼ŒåŒ…å«äº†æ‰€æœ‰ç‚®å°çš„å…±åŒç‰¹æ€§
 ****************************************/
 class Tower :public Sprite {
 public:
-	virtual bool init(const std::string& filename);
+	static Tower* create(Vec2 position, int choice);
 
-	static Tower* construct(Vec2 position, int choice);
+	virtual bool init(Vec2 position, int choice);
 
 	virtual void remove() { this->removeFromParentAndCleanup(true); }
 
@@ -20,21 +20,21 @@ public:
 
 	//	virtual void shoot();
 
-	//	virtual bool isTargetInRange(); //¼ì²éÊÇ·ñÓĞ¹¥»÷·¶Î§ÄÚÄ¿±ê
+	//	virtual bool isTargetInRange(); //æ£€æŸ¥æ˜¯å¦æœ‰æ”»å‡»èŒƒå›´å†…ç›®æ ‡
 
-	//  virtual void upgradeReminder(Scene* curr_scene); //ÌáÊ¾½ğ±Ò×ã¹»£¬¸ÃÅÚËş¿ÉÒÔÉı¼¶µÄĞ¡¼ıÍ·Í¼±ê
+	//  virtual void upgradeReminder(Scene* curr_scene); //æç¤ºé‡‘å¸è¶³å¤Ÿï¼Œè¯¥ç‚®å¡”å¯ä»¥å‡çº§çš„å°ç®­å¤´å›¾æ ‡
 
-	virtual void upgrade(Tower* tower); //Éı¼¶
+	virtual void upgrade(Tower* tower); //å‡çº§
 
 private:
-	Sprite* base;        //ÅÚËşµÄµ××ù£¬È¡¾öÓÚÅÚËşÖÖÀà
-	int tag;             //±àºÅ´ú±íÊÇÄÄ¸öÅÚËş(0£ºbottle|1£ºshit|2£ºsnow)
-	int level;           //µÈ¼¶
-	int construct_cost;  //½¨ÔìËùĞè½ğ±Ò£¬È¡¾öÓÚÅÚËşÖÖÀà
-	int upgrade_cost;    //Éı¼¶ËùĞè½ğ±Ò£¬È¡¾öÓÚÅÚËşÖÖÀà
-	int attack_power;    //¹¥»÷Ç¿¶È,È¡¾öÓÚÅÚËşµÈ¼¶
-	int attack_range;    //¹¥»÷·¶Î§,È¡¾öÓÚÅÚËşµÈ¼¶
+	Sprite* base;        //ç‚®å¡”çš„åº•åº§ï¼Œå–å†³äºç‚®å¡”ç§ç±»
+	int tag;             //ç¼–å·ä»£è¡¨æ˜¯å“ªä¸ªç‚®å¡”(0ï¼šbottle|1ï¼šshit|2ï¼šsnow)
+	int level;           //ç­‰çº§
+	int construct_cost;  //å»ºé€ æ‰€éœ€é‡‘å¸ï¼Œå–å†³äºç‚®å¡”ç§ç±»
+	int upgrade_cost;    //å‡çº§æ‰€éœ€é‡‘å¸ï¼Œå–å†³äºç‚®å¡”ç§ç±»
+	int attack_power;    //æ”»å‡»å¼ºåº¦,å–å†³äºç‚®å¡”ç­‰çº§
+	int attack_range;    //æ”»å‡»èŒƒå›´,å–å†³äºç‚®å¡”ç­‰çº§
 };
 
 
-#endif#pragma once
+#endif
