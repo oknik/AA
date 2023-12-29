@@ -7,50 +7,61 @@ USING_NS_CC;
 #define SHIT 1
 #define SNOW 2
 
-/*************************Ò»¶Ñ¸÷ÅÚËþ¡¢¸÷µÈ¼¶µÄÌØÐÔ²ÎÊý*************************/
-const std::string chooseTower[3] = { "pickBottle.png","pickshit.png","picksnow.png" };//½¨ÔìÅÚËþÊ±ÐèÒªµÄÍ¼Æ¬
-const std::string Towers[3] = { "bottle","shit","snow" };//-----------------------------´¢´æÅÚËþÃû³Æ
-const std::string bases[3] = { "bottlebase","shitbase","snowbase" };//----------------------¸÷¸öÅÚËþµÄµ××ù
-const int construct_costs[3] = { 100,120,160 };//-----------------------------------------½¨ÔìÅÚËþËùÐèµÄ½ð±Ò
+/*************************ä¸€å †å„ç‚®å¡”ã€å„ç­‰çº§çš„ç‰¹æ€§å‚æ•°*************************/
+const std::string chooseTowers[3] = { "pickBottle.png","pickshit.png","picksnow.png" };//å»ºé€ ç‚®å¡”æ—¶éœ€è¦çš„å›¾ç‰‡
+const std::string Towers[3] = { "bottle","shit","snow" };//-----------------------------å‚¨å­˜ç‚®å¡”åç§°
+const std::string bases[3]={"bottlebase.png","shitbase.png","snowbase.png"};//----------------------å„ä¸ªç‚®å¡”çš„åº•åº§
+const int construct_costs[3] = {100,120,160};//-----------------------------------------å»ºé€ ç‚®å¡”æ‰€éœ€çš„é‡‘å¸
 const int upgrade_costs[3][2] = { {180,220},
                                   {220,260},
-                                  {260,320} };//----------------------------------------Éý¼¶ÅÚËþËùÐèµÄ½ð±Ò
-const int attack_powers[3] = { 10,20,30 };//--------------------------------------------¸÷µÈ¼¶¹¥»÷Ê±µÄÇ¿¶È
-const int attack_ranges[3] = { 10,20,30 };//--------------------------------------------¸÷µÈ¼¶¹¥»÷µÄ·¶Î§
+                                  {260,320} };//----------------------------------------å‡çº§ç‚®å¡”æ‰€éœ€çš„é‡‘å¸
+const int attack_powers[3] = { 10,20,30 };//--------------------------------------------å„ç­‰çº§æ”»å‡»æ—¶çš„å¼ºåº¦
+const int attack_ranges[3] = { 10,20,30 };//--------------------------------------------å„ç­‰çº§æ”»å‡»çš„èŒƒå›´
 
-bool Tower::init(const std::string& filename)
-{
-    if (!Sprite::initWithFile(filename))
-        return false;
-    return true;
-}
-
-Tower* Tower::construct(Vec2 position, int choice)
-{
-    //½¨ÔìÅÚËþ£¬±àºÅÓëÍ¼Æ¬¶ÔÓ¦
-    Tower* tower = new Tower();
-
-    //³É¹¦½¨ÔìÒ»¸öÅÚËþ£¬¶ÔÆä½øÐÐ³õÊ¼»¯
-    if (tower && tower->init(chooseTower[choice])) {
-        tower->base->setTexture(bases[choice]);//--------------------³õÊ¼»¯ÅÚÌ¨µ××ù
-        tower->level = 0;//------------------------------------------³õÊ¼»¯µÈ¼¶Îª0¼¶
-        tower->tag = choice;//---------------------------------------³õÊ¼»¯ÅÚËþ±êÇ©£¬´ú±íËüÊÇÆ¿×Ó/±ã±ã/Ñ©»¨
-        tower->construct_cost = construct_costs[choice];//-----------³õÊ¼»¯ÅÚËþ½¨ÔìËùÐè½ð±Ò
-        tower->upgrade_cost = upgrade_costs[choice][tower->level];//-³õÊ¼»¯Éý¼¶ÅÚËþËùÐè½ð±Ò
-        tower->attack_power = attack_powers[tower->level];//---------³õÊ¼»¯¹¥»÷Ç¿¶È
-        tower->attack_range = attack_ranges[tower->level];//---------³õÊ¼»¯¹¥»÷·¶Î§
-        tower->base->setPosition(position);//------------------------µ××ùÖÃÓÚÖ¸¶¨Î»ÖÃ
-        tower->setPosition(position);//------------------------------ÅÚÌ¨ÖÃÓÚÖ¸¶¨Î»ÖÃ
+/**************************************************
+* position:ç›®æ ‡çš„å»ºé€ ä½ç½®
+* choice:BOTTLE  SHIT  SNOWé€‰æ‹©å»ºé€ å“ªä¸ª
+***************************************************/
+Tower* Tower::create(Vec2 position, int choice) {
+    Tower* tower = new (std::nothrow) Tower();
+    if (tower && tower->init(position, choice)) {
+        tower->autorelease();
         return tower;
     }
+    CC_SAFE_DELETE(tower);
     return nullptr;
 }
 
+bool Tower::init(Vec2 position, int choice) {
+    if (!Sprite::initWithFile(Towers[choice] + std::to_string(level+1) + ".png")) {
+        return false;
+    }
+
+    // åˆå§‹åŒ–æ“ä½œ
+    this->base = Sprite::create(bases[choice]);//---------------------ç”Ÿæˆåº•åº§
+    if (this->base) {//åº•åº§ç”ŸæˆæˆåŠŸå†åšåˆå§‹åŒ–æ“ä½œ
+        this->addChild(this->base);
+
+        this->level = 0;//--------------------------------------------åˆå§‹åŒ–ç­‰çº§ä¸º0çº§
+        this->tag = choice;//-----------------------------------------å®å®šä¹‰ç¼–å·ï¼Œä¿å­˜ç‚®å¡”ç±»åˆ«
+        this->construct_cost = construct_costs[choice];//-------------å»ºé€ æ‰€éœ€çš„é‡‘å¸
+        this->upgrade_cost = upgrade_costs[choice][this->level];//----å‡çº§æ‰€éœ€çš„é‡‘å¸
+        this->attack_power = attack_powers[this->level];//------------åˆå§‹åŒ–æ”»å‡»åŠ›
+        this->attack_range = attack_ranges[this->level];//------------åˆå§‹åŒ–æ”»å‡»èŒƒå›´
+        this->base->setPosition(position);  //------------------------è®¾ç½®åº•åº§ä½ç½®
+        this->setPosition(position);//--------------------------------è®¾ç½®ç‚®å¡”ä½ç½®
+
+        return true;
+    }
+
+    return false;
+}
+
 void Tower::upgrade(Tower* tower)
-{
-    tower->level++;//-------------------------------------------------ÅÚËþ¼¶Êý+1
-    tower->setTexture(Towers[tag] + std::to_string(tag) + ".png");//------ÖØÖÃÅÚËþÍ¼Ïñ
-    tower->upgrade_cost = upgrade_costs[tower->tag][tower->level];//--¸üÐÂÉý¼¶ÅÚËþËùÐè½ð±Ò
-    tower->attack_power = attack_powers[tower->level];//--------------¸üÐÂ¹¥»÷Ç¿¶È
-    tower->attack_range = attack_ranges[tower->level];//--------------¸üÐÂ¹¥»÷·¶Î§
+{  
+    tower->level++;//-------------------------------------------------ç‚®å¡”çº§æ•°+1
+    tower->setTexture(Towers[tag]+std::to_string(tag)+".png");//------é‡ç½®ç‚®å¡”å›¾åƒ
+    tower->upgrade_cost = upgrade_costs[tower->tag][tower->level];//--æ›´æ–°å‡çº§ç‚®å¡”æ‰€éœ€é‡‘å¸
+    tower->attack_power = attack_powers[tower->level];//--------------æ›´æ–°æ”»å‡»å¼ºåº¦
+    tower->attack_range = attack_ranges[tower->level];//--------------æ›´æ–°æ”»å‡»èŒƒå›´
 }
