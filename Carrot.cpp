@@ -62,8 +62,6 @@ void Carrot::updateCarrotSprite() {
     if (hp <= 3) {
         this->setTexture("test/Carrot_5.png");
     }
-    if (hp <= 1)
-        hp = 1;
 }
 
 void Carrot::updateHPLabel() {

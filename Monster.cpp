@@ -60,7 +60,7 @@ MoveBy* Monster::CreateAction(Path path)
 	return moveAction;
 }
 
-void Monster::Move(const std::vector<Path>& path,float dt)
+void Monster::Move(const std::vector<Path>& path, float dt)
 {
 	Vector <FiniteTimeAction*> vec;
 	//延时出现
@@ -90,7 +90,7 @@ void Monster::Move(const std::vector<Path>& path,float dt)
 }
 
 
-bool Monster::init(const std::string& spriteName, float init_x, float init_y, float scale, int speed,int attack, int deadCost)
+bool Monster::init(const std::string& spriteName, float init_x, float init_y, float scale, int speed, int attack, int deadCost)
 {
 	if (!Node::init())
 	{
@@ -110,7 +110,7 @@ bool Monster::init(const std::string& spriteName, float init_x, float init_y, fl
 		m_deadcost = deadCost;	// 设置金币
 
 		this->addChild(monster, 4);		//添加到父节点
-		
+
 		blood = ui::LoadingBar::create("monster/blood.png");// 创建血条
 
 		if (!blood)
@@ -119,7 +119,7 @@ bool Monster::init(const std::string& spriteName, float init_x, float init_y, fl
 		}
 		else
 		{
-			
+
 			blood->setPercent(100);	// 初始血量为100%
 			blood->setPosition(Vec2(init_x, init_y + monster->getBoundingBox().size.height));	//设置位置
 			blood->setAnchorPoint(Vec2(0.5, 0));		//设置锚点

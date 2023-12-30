@@ -33,14 +33,14 @@ struct WaveData
 class FirstMapScene : public cocos2d::Scene {
 public:
     int money = 200;
-    int round = 0;
+    int round = 1;
     bool win = 0;
     Carrot* carrot;
     cocos2d::Label* RoundLabel;
     MonsterManager Monsters;        //怪物管理器
     std::vector<Path> road;         //怪物移动路径
     std::vector<WaveData> waves;    //怪物波次数据
-
+    
     static cocos2d::Scene* createScene();
     virtual bool init();
     cocos2d::Label* createRoundLabel();
@@ -76,9 +76,9 @@ public:
     /*=================有关怪物的函数=============*/
 
     /*
-    * 可以生成一波怪物
-    * type 种类  blood 血量  count 个数  inr 出现间隔 carrot 把萝卜当成参数传进去  road 怪物移动路径
-    */
+   可以生成一波怪物
+   type 种类  blood 血量  count 个数  inr 出现间隔 carrot 把萝卜当成参数传进去  road 怪物移动路径
+   */
     void MonsterWave(const int type, const float blood, const int count, const float inr);
 
     void SpawnWave(const WaveData& wave);

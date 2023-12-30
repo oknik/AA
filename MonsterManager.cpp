@@ -34,7 +34,7 @@ bool MonsterManager::CheckWave()
     if (monsters.empty())
     {
         return true;
-       
+
     }
     else
     {

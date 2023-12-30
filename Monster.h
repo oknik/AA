@@ -76,7 +76,7 @@ public:
 	//更新怪物状态
 	void UpdateMonster(float dt);
 	//怪物受伤
-	void GetHurt(float damage);	
+	void GetHurt(float damage);
 	//判断怪物是否死亡
 	bool isDead() { return c_blood <= 0; }
 	//判断怪物是否仍然有效

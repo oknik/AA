@@ -1,4 +1,4 @@
-Ôªø#include"audio/include/AudioEngine.h"
+#include"audio/include/AudioEngine.h"
 #include"Data.h"
 #include"HelloWorldScene.h"
 #include"MapSelectionScene.h"
@@ -6,18 +6,16 @@
 #include"Object.h"
 #include"Tower.h"
 #include<vector>
-
+USING_NS_CC;
 static void problemLoading(const char* filename)
 {
     printf("Error while loading: %s\n", filename);
     printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
 }
-
-cocos2d::Scene* FirstMapScene::createScene() {
+Scene* FirstMapScene::createScene() {
     auto scene = FirstMapScene::create();
     return scene;
 }
-
 cocos2d::Label* FirstMapScene::createRoundLabel() {
     RoundLabel = cocos2d::Label::createWithTTF(cocos2d::StringUtils::format("%d      10 rounds", round), "fonts/Marker Felt.ttf", 24);
     if (!RoundLabel) {
@@ -25,36 +23,32 @@ cocos2d::Label* FirstMapScene::createRoundLabel() {
     }
     return RoundLabel;
 }
-
 void FirstMapScene::updateRoundLabel(float dt) {
     if (RoundLabel) {
         RoundLabel->setString(cocos2d::StringUtils::format("%d      10 rounds", round));
     }
 
 }
-
 void FirstMapScene::backToMain(cocos2d::Ref* sender) {
     isFirstMapWon = true;
-    int selectId = cocos2d::AudioEngine::play2d("test/Select.mp3", false);//ËøôÈáåÁöÑtrue or falseÊòØÂæ™ÁéØÁöÑÊÑèÊÄù
+    int selectId = cocos2d::AudioEngine::play2d("test/Select.mp3", false);//’‚¿Ôµƒtrue or false «—≠ª∑µƒ“‚Àº
     this->schedule([=](float dt) {
         if (cocos2d::AudioEngine::getState(selectId) != cocos2d::AudioEngine::AudioState::PLAYING) {
             cocos2d::AudioEngine::stopAll();
             this->unschedule("checkAudioFinished");
-            cocos2d::Director::getInstance()->replaceScene(cocos2d::TransitionFade::create(1.0f, HelloWorld::createScene()));
-            // Âú®Èü≥È¢ëÊí≠ÊîæÂÆåÊØïÂêéÊâßË°åÂàáÊç¢Âú∫ÊôØÁöÑÊìç‰Ωú
+            cocos2d::Director::getInstance()->replaceScene(cocos2d::TransitionFade::create(1.0f, HelloWorld::createScene()));// ‘⁄“Ù∆µ≤•∑≈ÕÍ±œ∫Û÷¥––«–ªª≥°æ∞µƒ≤Ÿ◊˜
+            // ‘⁄“Ù∆µ≤•∑≈ÕÍ±œ∫Û÷¥––«–ªª≥°æ∞µƒ≤Ÿ◊˜
         }
         }, "checkAudioFinished");
 }
-
 void FirstMapScene::pause(cocos2d::Ref* sender) {
     if (Director::getInstance()->isPaused()) {
-        Director::getInstance()->resume(); // ÊÅ¢Â§çÂú∫ÊôØÁöÑËøêË°å
+        Director::getInstance()->resume(); // ª÷∏¥≥°æ∞µƒ‘À––
     }
     else {
-        Director::getInstance()->pause(); // ÊöÇÂÅúÂú∫ÊôØÁöÑËøêË°å
+        Director::getInstance()->pause(); // ‘›Õ£≥°æ∞µƒ‘À––
     }
 }
-
 void FirstMapScene::removeAllMonster() {
     auto children = this->getChildren();
     for (auto child : children) {
@@ -64,11 +58,12 @@ void FirstMapScene::removeAllMonster() {
         }
     }
 }
-
 void FirstMapScene::firstTryAgain(cocos2d::Ref* sender) {
     cocos2d::AudioEngine::play2d("test/Select.mp3", false);
     carrot->hp = 10;
     money = 200;
+    round = 1;
+    win = 0;
 
     this->removeChildByName("FailSprite");
     this->removeChildByName("TryAgainMenu");
@@ -80,7 +75,6 @@ void FirstMapScene::firstTryAgain(cocos2d::Ref* sender) {
             StartWaves();
         }, 0.f, "StartWaves");
 }
-
 void FirstMapScene::updateFail(float dt) {
     auto failSprite = this->getChildByName("FailSprite");
     auto tryAgainMenu = this->getChildByName("TryAgainMenu");
@@ -93,6 +87,20 @@ void FirstMapScene::updateFail(float dt) {
         failSprite->setName("FailSprite");
         this->addChild(failSprite, 11);
         Director::getInstance()->getActionManager()->pauseAllRunningActions();
+        unschedule("update_monsters");
+
+        auto failRoundLabel = Label::createWithTTF(StringUtils::format("%d    10", round), "fonts/Marker Felt.ttf", 18);
+        if (failRoundLabel) {
+            failRoundLabel->setPosition(Vec2(526, 317));
+            this->addChild(failRoundLabel, 11);
+        }
+
+        auto failMapLabel = Label::createWithTTF("1", "fonts/Marker Felt.ttf", 18);
+        if (failMapLabel) {
+            failMapLabel->setPosition(Vec2(443, 282));
+            this->addChild(failMapLabel, 11);
+        }
+
 
         auto selectItem = MenuItemImage::create(
             "test/SelectNormal.png",
@@ -106,7 +114,7 @@ void FirstMapScene::updateFail(float dt) {
             auto menu = cocos2d::Menu::create(selectItem, nullptr);
             menu->setPosition(cocos2d::Vec2::ZERO);
             this->addChild(menu, 12);
-            menu->setName("SelectMenu"); 
+            menu->setName("SelectMenu");
         }
         else {
             CCLOG("Failed to load select button");
@@ -122,7 +130,7 @@ void FirstMapScene::updateFail(float dt) {
             tryAgainItem->setPosition(Vec2(558, 248));
             auto menu = Menu::create(tryAgainItem, nullptr);
             menu->setPosition(Vec2::ZERO);
-            this->addChild(menu,12); 
+            this->addChild(menu, 12);
             menu->setName("TryAgainMenu");
         }
         else {
@@ -130,7 +138,6 @@ void FirstMapScene::updateFail(float dt) {
         }
     }
 }
-
 void FirstMapScene::updateWin(float dt) {
     auto winSprite = this->getChildByName("WinSprite");
     auto tryAgainMenu = this->getChildByName("TryAgainMenu");
@@ -181,7 +188,6 @@ void FirstMapScene::updateWin(float dt) {
         }
     }
 }
-
 void FirstMapScene::changeSpeed(Ref* sender) {
     float currentTimeScale = Director::getInstance()->getScheduler()->getTimeScale();
     if (currentTimeScale == 1.0f) {
@@ -192,49 +198,47 @@ void FirstMapScene::changeSpeed(Ref* sender) {
     }
 }
 
-
 bool FirstMapScene::init() {
     if (!Scene::init()) {
         return false;
     }
 
-    //ËøôÊòØ‰∏Ä‰∏™ÁõëÂê¨Âô®
+    //’‚ «“ª∏ˆº‡Ã˝∆˜
     /*label = cocos2d::Label::createWithTTF("Mouse Position: (0, 0)", "fonts/arial.ttf", 24);
-    label->setPosition(cocos2d::Vec2(300, 300)); // ËÆæÁΩÆ‰ΩçÁΩÆ
+    label->setPosition(cocos2d::Vec2(300, 300)); // …Ë÷√Œª÷√
     this->addChild(label, 1);
     auto listener = cocos2d::EventListenerTouchOneByOne::create();
     listener->onTouchBegan = CC_CALLBACK_2(FirstMapScene::onTouchBegan, this);
     this->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);*/
 
-
     cocos2d::AudioEngine::stopAll();
     cocos2d::AudioEngine::play2d("test/PlayBGM.mp3", true);
 
-    auto sprite = cocos2d::Sprite::create("test/SelectBG.png");
+    auto sprite = cocos2d::Sprite::create("test/SelectBG.png");//0≤„
     if (sprite == nullptr)
     {
         problemLoading("'test/SelectBG.png'");
     }
     else
     {
-        sprite->setScale(1000.0f / sprite->getContentSize().width, 600.0f / sprite->getContentSize().height);//ËÆæÁΩÆÂõæÁâáÂ§ßÂ∞èÔºåË¶ÅË∑üËøêË°åÊ°ÜÂØπÂ∫î
+        sprite->setScale(1000.0f / sprite->getContentSize().width, 600.0f / sprite->getContentSize().height);//…Ë÷√Õº∆¨¥Û–°£¨“™∏˙‘À––øÚ∂‘”¶
         sprite->setPosition(cocos2d::Vec2(500, 300));
         this->addChild(sprite, 0);
     }
 
-    auto path = cocos2d::Sprite::create("test/Path1.png");
+    auto path = cocos2d::Sprite::create("test/Path1.png");//0≤„
     if (path == nullptr)
     {
         problemLoading("'test/Path1.png'");
     }
     else
     {
-        path->setScale(1000.0f / path->getContentSize().width, 600.0f / path->getContentSize().height);//ËÆæÁΩÆÂõæÁâáÂ§ßÂ∞èÔºåË¶ÅË∑üËøêË°åÊ°ÜÂØπÂ∫î
+        path->setScale(1000.0f / path->getContentSize().width, 600.0f / path->getContentSize().height);//…Ë÷√Õº∆¨¥Û–°£¨“™∏˙‘À––øÚ∂‘”¶
         path->setPosition(cocos2d::Vec2(500, 300));
         this->addChild(path, 0);
     }
 
-    auto upBoard = cocos2d::Sprite::create("test/UpBoard.png");
+    auto upBoard = cocos2d::Sprite::create("test/UpBoard.png");//0≤„
     if (upBoard == nullptr)
     {
         problemLoading("'test/UpBoard.png'");
@@ -245,7 +249,7 @@ bool FirstMapScene::init() {
         this->addChild(upBoard, 0);
     }
 
-    auto upBoard2 = cocos2d::Sprite::create("test/UpBoard2.png");
+    auto upBoard2 = cocos2d::Sprite::create("test/UpBoard2.png");//0≤„
     if (upBoard == nullptr)
     {
         problemLoading("'test/UpBoard2.png'");
@@ -256,30 +260,29 @@ bool FirstMapScene::init() {
         this->addChild(upBoard2, 0);
     }
 
-    auto moneyLabel = cocos2d::Label::createWithTTF(cocos2d::StringUtils::format("%d", money), "fonts/Marker Felt.ttf", 24);
+    auto moneyLabel = cocos2d::Label::createWithTTF(cocos2d::StringUtils::format("%d", money), "fonts/Marker Felt.ttf", 24);//0≤„
     if (moneyLabel) {
         moneyLabel->setPosition(cocos2d::Vec2(200, 575));
-        this->addChild(moneyLabel);
+        this->addChild(moneyLabel, 0);
     }
     else {
         CCLOG("Error creating Label");
     }
 
-    auto roundLabel = cocos2d::Label::createWithTTF(cocos2d::StringUtils::format("%d      10 rounds", round), "fonts/Marker Felt.ttf", 24);
+    auto roundLabel = createRoundLabel();//0≤„
     if (roundLabel) {
         roundLabel->setPosition(cocos2d::Vec2(540, 575));
-        this->addChild(roundLabel);
+        this->addChild(roundLabel, 0);
     }
     else {
-        CCLOG("Error creating Label");
+        CCLOG("Error creating Round Label");
     }
 
     auto speedUpItem1 = MenuItemImage::create("test/Speed_1.png", "test/Speed_1.png");
     auto speedUpItem2 = MenuItemImage::create("test/Speed_2.png", "test/Speed_2.png");
     auto speedUp = MenuItemToggle::createWithCallback(CC_CALLBACK_1(FirstMapScene::changeSpeed, this), speedUpItem1, speedUpItem2, nullptr);
-
     if (speedUp) {
-        speedUp->setPosition(Vec2(730,570));
+        speedUp->setPosition(Vec2(730, 570));
         auto menu = Menu::create(speedUp, nullptr);
         menu->setPosition(Vec2::ZERO);
         this->addChild(menu);
@@ -288,12 +291,11 @@ bool FirstMapScene::init() {
     auto pauseItem1 = MenuItemImage::create("test/Pause.png", "test/Pause.png");
     auto pauseItem2 = MenuItemImage::create("test/Restart.png", "test/Restart.png");
     auto pauseItem = MenuItemToggle::createWithCallback(CC_CALLBACK_1(FirstMapScene::pause, this), pauseItem1, pauseItem2, nullptr);
-
     if (pauseItem) {
-        pauseItem->setPosition(Vec2(800, 570)); 
+        pauseItem->setPosition(Vec2(800, 570));
         auto menu = Menu::create(pauseItem, nullptr);
         menu->setPosition(Vec2::ZERO);
-        this->addChild(menu); 
+        this->addChild(menu);
     }
 
     auto BackItem = cocos2d::MenuItemImage::create(
@@ -302,73 +304,13 @@ bool FirstMapScene::init() {
         CC_CALLBACK_1(FirstMapScene::backToMain, this));
     if (BackItem) {
         BackItem->setPosition(cocos2d::Vec2(850, 575));
-        auto menu = cocos2d::Menu::create(BackItem, nullptr); // ÂàõÂª∫ËèúÂçïÂπ∂Ê∑ªÂä†ËøîÂõûÊåâÈíÆ
+        auto menu = cocos2d::Menu::create(BackItem, nullptr); // ¥¥Ω®≤Àµ•≤¢ÃÌº”∑µªÿ∞¥≈•
         menu->setPosition(cocos2d::Vec2::ZERO);
         this->addChild(menu);
     }
     else {
-        CCLOG("Failed to load back button"); // Â¶ÇÊûúÂàõÂª∫Â§±Ë¥•ÔºåËæìÂá∫ÈîôËØØ‰ø°ÊÅØ
+        CCLOG("Failed to load back button"); // »Áπ˚¥¥Ω® ß∞‹£¨ ‰≥ˆ¥ÌŒÛ–≈œ¢
     }
-
-    auto tree1 = Tree::createTree();
-    tree1->setPosition(cocos2d::Vec2(194, 374));
-    this->addChild(tree1);
-
-    auto tree2 = Tree::createTree();
-    tree2->setPosition(cocos2d::Vec2(260, 205));
-    this->addChild(tree2);
-
-    auto tree3 = Tree::createTree();
-    tree3->setPosition(cocos2d::Vec2(736, 225));
-    this->addChild(tree3);
-
-    auto tree4 = Tree::createTree();
-    tree4->setPosition(cocos2d::Vec2(809, 374));
-    this->addChild(tree4);
-
-    auto ice1 = Ice::createIce();
-    ice1->setPosition(cocos2d::Vec2(245, 475));
-    this->addChild(ice1);
-
-    auto ice2 = Ice::createIce();
-    ice2->setPosition(cocos2d::Vec2(365, 475));
-    this->addChild(ice2);
-
-    auto ice3 = Ice::createIce();
-    ice3->setPosition(cocos2d::Vec2(365, 380));
-    this->addChild(ice3);
-
-    auto ice4 = Ice::createIce();
-    ice4->setPosition(cocos2d::Vec2(415, 380));
-    this->addChild(ice4);
-
-    auto ice5 = Ice::createIce();
-    ice5->setPosition(cocos2d::Vec2(512, 280));
-    this->addChild(ice5);
-
-    auto ice6 = Ice::createIce();
-    ice6->setPosition(cocos2d::Vec2(589, 380));
-    this->addChild(ice6);
-
-    auto ice7 = Ice::createIce();
-    ice7->setPosition(cocos2d::Vec2(570, 100));
-    this->addChild(ice7);
-
-    auto bigIce1 = BigIce::createBigIce();
-    bigIce1->setPosition(cocos2d::Vec2(335, 100));
-    this->addChild(bigIce1);
-
-    auto bigIce2 = BigIce::createBigIce();
-    bigIce2->setPosition(cocos2d::Vec2(591, 225));
-    this->addChild(bigIce2);
-
-    auto icecream = Icecream::createIcecream();
-    icecream->setPosition(cocos2d::Vec2(365, 225));
-    this->addChild(icecream);
-
-    auto house = House::createHouse();
-    house->setPosition(cocos2d::Vec2(591, 435));
-    this->addChild(house);
 
     auto hpSprite = Carrot::createHP();
     hpSprite->setPosition(cocos2d::Vec2(810, 520));
@@ -395,12 +337,13 @@ bool FirstMapScene::init() {
     this->schedule(CC_SCHEDULE_SELECTOR(FirstMapScene::updateWin), 0.1f);
     this->schedule(CC_SCHEDULE_SELECTOR(FirstMapScene::updateFail), 0.1f);
 
+
     auto hpButton = cocos2d::MenuItemImage::create("test/Update.png", "test/Update.png", [=](cocos2d::Ref* sender) {
         if (money >= 500) {
             carrot->hp += 1;
             money -= 500;
-            carrot->updateCarrotSprite();//‰øÆÊîπËêùÂçúÂõæÊ°à
-            moneyLabel->setString(cocos2d::StringUtils::format("%d", money));//‰øÆÊîπmoneyLable
+            carrot->updateCarrotSprite();//–ﬁ∏ƒ¬‹≤∑Õº∞∏
+            moneyLabel->setString(cocos2d::StringUtils::format("%d", money));//–ﬁ∏ƒmoneyLable
             cocos2d::AudioEngine::play2d("test/Select.mp3", false);
         }
         else {
@@ -426,145 +369,224 @@ bool FirstMapScene::init() {
         CCLOG("Error creating HP Button");
     }
 
-    /*====================ÂàõÂª∫ÁÇÆÂè∞ÈÄâÊã©ÁïåÈù¢=========================*/
-    //ÂÆö‰πâÊúâÊïàÁöÑÊìç‰ΩúËåÉÂõ¥ÔºàÔºüÔºüÔºüÔºâ
-    Rect validArea = Rect(100, 100, 800, 400);  //ÊúâÊïàËåÉÂõ¥ÔºåÂú®ËåÉÂõ¥ÂÜÖÂèØ‰ª•ÊîæÁΩÆÁÇÆÂ°î
 
-    //ÂàõÂª∫ÈÄâÊã©ÁÇÆÂè∞Êó∂ÁöÑÂÆö‰ΩçÁôΩÊ°Ü
-    auto blank = Sprite::create("tower/blank.png");
-    if (blank == nullptr) {
-        problemLoading("'blank.png'");
-    }
-    else {
-        this->addChild(blank, 0);
-        blank->setVisible(false);
-    }
-    blank->setScale(0.6); //ÈáçÊñ∞Ë∞ÉÊï¥ÁôΩÊ°ÜÂ§ßÂ∞è
 
-    //ÂàõÂª∫ÁÇÆÂè∞ÈÄâÊã©ÁïåÈù¢
-    auto pickBottle = Sprite::create("tower/pickBottle.png");
-    if (pickBottle == nullptr) {
-        problemLoading("'pickbottle.png'");
-    }
-    else {
-        this->addChild(pickBottle, 0);
-        pickBottle->setVisible(false);
+
+
+
+
+
+
+    enum GridType { _BOOTLE, _SHIT, _SNOW, _ICE, _BIGICE, _TREE, _HOUSE, _ICECREAM, _NO, _YES };
+
+    // ºŸ…Ë’‚ «“ª∏ˆ±Ì æ≤ªÕ¨∏Ò◊”¿‡–Õµƒ∂˛Œ¨ ˝◊È
+    int gridMap[9][17] = {
+        { _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO},
+        { _NO, _NO, _NO, _NO, _NO, _BIGICE, _BIGICE, _YES, _YES, _ICE, _YES, _YES, _YES, _NO, _NO, _NO, _NO},
+        { _NO, _NO, _YES, _YES, _YES, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _YES, _YES, _YES, _NO, _NO},
+        { _NO, _NO, _YES, _YES, _TREE, _NO, _ICECREAM, _YES, _YES, _BIGICE, _BIGICE, _NO, _TREE, _YES, _YES, _NO, _NO},
+        { _NO, _NO, _YES, _YES, _YES, _NO, _YES, _YES, _ICE, _YES, _YES, _NO, _YES, _YES, _YES, _NO, _NO},
+        { _NO, _NO, _YES, _TREE, _YES, _NO, _ICE, _ICE, _YES, _ICE, _YES, _NO, _YES, _TREE, _YES, _NO, _NO},
+        { _NO, _NO, _YES, _NO, _NO, _NO, _YES, _YES, _YES, _HOUSE, _HOUSE, _NO, _NO, _NO, _YES, _NO, _NO},
+        { _NO, _NO, _YES, _YES, _ICE, _YES, _ICE, _YES, _YES, _HOUSE, _HOUSE, _YES, _YES, _YES, _YES, _NO, _NO},
+        { _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO, _NO},
+    };
+
+    // —≠ª∑¥¥Ω®≤ªÕ¨¿‡–Õµƒ∏Ò◊”
+    for (int row = 0; row < 9; row++) {
+        for (int col = 0; col < 17; col++) {
+            // º∆À„√ø∏ˆ∏Ò◊”µƒŒª÷√
+            float posX = col * 60 + 25;   // ∏Ò◊”µƒ÷––ƒ X ◊¯±Í
+            float posY = row * 68 + 20; // ∏Ò◊”µƒ÷––ƒ Y ◊¯±Í
+            if (row == 1 && col == 5) {
+                col++;
+            }
+            if (row == 1 && col == 6) {
+                posX += 30;
+            }
+            if (row == 3 && col == 9) {
+                col++;
+            }
+            if (row == 3 && col == 10) {
+                posX += 30;
+            }
+            if (row == 6 && col == 9) {
+                col++;
+            }
+            if (row == 6 && col == 10) {
+                col++;
+            }
+            if (row == 7 && col == 9) {
+                col++;
+            }
+            if (row == 7 && col == 10) {
+                posX += 30;
+                posY -= 40;
+            }
+
+            // ¥¥Ω®æ´¡È≤¢ÃÌº”µΩ≥°æ∞÷–
+            std::string filename;
+            switch (gridMap[row][col]) {
+            case _ICE:
+                filename = "test/Ice.png";
+                break;
+            case _BIGICE:
+                filename = "test/BigIce.png";
+                break;
+            case _ICECREAM:
+                filename = "test/Icecream.png";
+                break;
+            case _TREE:
+                filename = "test/Tree.png";
+                break;
+            case _HOUSE:
+                filename = "test/House.png";
+                break;
+
+            }
+            Sprite* gridSprite = Sprite::create(filename);
+            if (gridSprite) {
+                gridSprite->setPosition(Vec2(posX, posY));
+                this->addChild(gridSprite);
+            }
+        }
     }
 
-    auto pickShit = Sprite::create("tower/pickShit.png");
-    if (pickShit == nullptr) {
-        problemLoading("'pickshit.png'");
-    }
-    else {
-        this->addChild(pickShit, 0);
-        pickShit->setVisible(false);
-    }
-    pickShit->setScale(0.6); //ÈáçÊñ∞Ë∞ÉÊï¥Â§ßÂ∞è
-
-    auto pickSnow = Sprite::create("tower/pickSnow.png");
-    if (pickSnow == nullptr) {
-        problemLoading("'picksnow.png'");
-    }
-    else {
-        this->addChild(pickSnow, 0);
-        pickSnow->setVisible(false);
-    }
-    pickSnow->setScale(0.6); //ÈáçÊñ∞Ë∞ÉÊï¥Â§ßÂ∞è
-
-    /**********************************ÊòæÁ§∫‰∏çÂá∫Êù•‰∏çÁü•ÈÅìÈóÆÈ¢òÂá∫Âú®Âì™ÔºåËøòË¶ÅÊîπËøõTowerÁ±ª
-    Tower* bottle = Tower::create(Vec2(500, 300), BOTTLE);
-    if (bottle)
-        this->addChild(bottle);
-    ***********************************/
-
-    //ÁõëÂê¨Âô®,Ë∑üË∏™Èº†Ê†á‰ΩçÁΩÆÔºåÂú®ÁÇπÂáªÊó∂ÊòæÁ§∫ÈÄâÊã©ÁÇÆÂè∞ÁöÑÂÆö‰ΩçÁôΩÊ°Ü
-    auto listener = EventListenerTouchOneByOne::create();
-    listener->onTouchBegan = [blank, pickBottle, pickShit, pickSnow, validArea, this](Touch* touch, Event* event) {
+    auto touchListener = EventListenerTouchOneByOne::create();
+    touchListener->setSwallowTouches(true);
+    touchListener->onTouchBegan = [=](Touch* touch, Event* event) {
         Vec2 touchPos = touch->getLocation();
-        if (!blank->isVisible()) { //ÂΩìÈÄâÊã©Ê°Ü‰∏çÂèØËßÅÊó∂
-            if (validArea.containsPoint(touchPos)) { //Ëã•Âú®ËåÉÂõ¥ÂÜÖÔºåÊòæÁ§∫ÁÇÆÂè∞ÈÄâÈ°π
-                blank->setPosition(Vec2(touchPos.x, touchPos.y));
-                blank->setVisible(true);
-                pickBottle->setPosition(Vec2(touchPos.x, touchPos.y + 45));
-                pickBottle->setVisible(true);
-                pickShit->setPosition(Vec2(touchPos.x - 45, touchPos.y + 45));
-                pickShit->setVisible(true);
-                pickSnow->setPosition(Vec2(touchPos.x + 45, touchPos.y + 45));
-                pickSnow->setVisible(true);
-            }
-            else {  //Ëã•‰∏çÂú®ËåÉÂõ¥ÂÜÖÔºåÊí≠ÊîæÈîôËØØÈü≥ÊïàÔºå‰∏çÊòæÁ§∫ÈÄâÈ°π
-                blank->setVisible(false);
-                pickBottle->setVisible(false);
-                pickShit->setVisible(false);
-                pickSnow->setVisible(false);
-                AudioEngine::play2d("test/Wrong.mp3", false);
-                return false;
-            }
+        Label* label = Label::createWithTTF(StringUtils::format("Touch Pos: (%.2f, %.2f)", touchPos.x, touchPos.y), "fonts/arial.ttf", 50);
+        if (label) {
+            label->setPosition(Vec2(100, 100)); // …Ë÷√ Label µƒŒª÷√
+            this->addChild(label, 10); // Ω´ Label ÃÌº”µΩ≥°æ∞÷–
         }
-        else {//ÂΩìÈÄâÊã©Ê°ÜÂèØËßÅÊó∂
-            Vec2 choice = touch->getLocation();
-            if (pickBottle->getBoundingBox().containsPoint(choice)) {  //ÈÄâ‰∏≠Áì∂Â≠êÁÇÆ
-                Vec2 blankPos = blank->getPosition();
-                auto bottle = Sprite::create("tower/bottle1.png");
-                if (bottle == nullptr) {
-                    problemLoading("'bottle1.png'");
-                }
-                else {
-                    bottle->setPosition(blankPos);
-                    blank->setVisible(false);
-                    pickBottle->setVisible(false);
-                    pickShit->setVisible(false);
-                    pickSnow->setVisible(false);
-                    this->addChild(bottle, 0);
-                }
+        int col = (touchPos.x) / 60;
+        int row = (touchPos.y) / 68;
+        GridType type = static_cast<GridType>(gridMap[row][col]);
+        if (type == _YES) {
+            auto blank = Sprite::create("tower/blank.png");
+            if (blank == nullptr) {
+                problemLoading("'blank.png'");
             }
-            if (pickShit->getBoundingBox().containsPoint(choice)) {  //ÈÄâ‰∏≠‰æø‰æø
-                Vec2 blankPos = blank->getPosition();
-                auto shit = Sprite::create("tower/shit1.png");
-                if (shit == nullptr) {
-                    problemLoading("'shit1.png'");
-                }
-                else {
-                    shit->setPosition(blankPos);
-                    blank->setVisible(false);
-                    pickBottle->setVisible(false);
-                    pickShit->setVisible(false);
-                    pickSnow->setVisible(false);
-                    this->addChild(shit, 0);
-                }
+            else {
+                this->addChild(blank, 1);
             }
-            if (pickSnow->getBoundingBox().containsPoint(choice)) {  //ÈÄâ‰∏≠Èõ™Ëä±
-                Vec2 blankPos = blank->getPosition();
-                auto snow = Sprite::create("tower/snow1.png");
-                if (snow == nullptr) {
-                    problemLoading("'snow1.png'");
-                }
-                else {
-                    snow->setPosition(blankPos);
-                    blank->setVisible(false);
-                    pickBottle->setVisible(false);
-                    pickShit->setVisible(false);
-                    pickSnow->setVisible(false);
-                    this->addChild(snow, 0);
-                }
-            }
-        }
-        return true;
-        };
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
-/*=======================ËøôÈáåÊòØÊÄ™Áâ©=========================*/
+            auto pickBottle = Sprite::create("tower/pickBottle.png");
+            if (pickBottle == nullptr) {
+                problemLoading("'pickbottle.png'");
+            }
+            else {
+                this->addChild(pickBottle, 1);
+            }
+            pickBottle->setScale(0.6);
+
+            auto pickShit = Sprite::create("tower/pickShit.png");
+            if (pickShit == nullptr) {
+                problemLoading("'pickshit.png'");
+            }
+            else {
+                this->addChild(pickShit, 1);
+            }
+            pickShit->setScale(0.6);
+
+            auto pickSnow = Sprite::create("tower/pickSnow.png");
+            if (pickSnow == nullptr) {
+                problemLoading("'picksnow.png'");
+            }
+            else {
+                this->addChild(pickSnow, 1);
+            }
+            pickSnow->setScale(0.6);
+
+            blank->setPosition(Vec2(col * 60 + 25, row * 68 + 20));
+            pickBottle->setPosition(Vec2(col * 60 + 25 - 45, row * 68 + 20 + 45));
+            pickShit->setPosition(Vec2(col * 60 + 25, row * 68 + 20 + 45));
+            pickSnow->setPosition(Vec2(col * 60 + 25 + 45, row * 68 + 20 + 45));
+
+            // ¥¥Ω® Sprite µƒµ„ª˜º‡Ã˝∆˜
+            auto spriteListener = EventListenerTouchOneByOne::create();
+            spriteListener->setSwallowTouches(true);
+
+            // º‡Ã˝µ„ª˜ ¬º˛
+            spriteListener->onTouchBegan = [=](Touch* touch, Event* event) {
+                auto target = static_cast<Sprite*>(event->getCurrentTarget());
+                Vec2 choice = touch->getLocation();
+
+                if (target->getBoundingBox().containsPoint(choice)) {
+                    if (target == pickBottle) {
+                        Vec2 blankPos = blank->getPosition();
+                        auto bottle = Sprite::create("tower/bottle1.png");
+                        if (bottle == nullptr) {
+                            problemLoading("'bottle1.png'");
+                        }
+                        else {
+                            bottle->setPosition(blankPos);
+                            blank->setVisible(false);
+                            pickBottle->setVisible(false);
+                            pickShit->setVisible(false);
+                            pickSnow->setVisible(false);
+                            this->addChild(bottle, 0);
+                        }
+                    }
+                    else if (target == pickShit) {
+                        Vec2 blankPos = blank->getPosition();
+                        auto shit = Sprite::create("tower/shit1.png");
+                        if (shit == nullptr) {
+                            problemLoading("'shit1.png'");
+                        }
+                        else {
+                            shit->setPosition(blankPos);
+                            blank->setVisible(false);
+                            pickBottle->setVisible(false);
+                            pickShit->setVisible(false);
+                            pickSnow->setVisible(false);
+                            this->addChild(shit, 0);
+                        }
+                    }
+                    else if (target == pickSnow) {
+                        Vec2 blankPos = blank->getPosition();
+                        auto snow = Sprite::create("tower/snow1.png");
+                        if (snow == nullptr) {
+                            problemLoading("'snow1.png'");
+                        }
+                        else {
+                            snow->setPosition(blankPos);
+                            blank->setVisible(false);
+                            pickBottle->setVisible(false);
+                            pickShit->setVisible(false);
+                            pickSnow->setVisible(false);
+                            this->addChild(snow, 0);
+                        }
+                    }
+                    return true;
+                }
+                return false;
+                };
+
+            _eventDispatcher->addEventListenerWithSceneGraphPriority(spriteListener->clone(), pickBottle);
+            _eventDispatcher->addEventListenerWithSceneGraphPriority(spriteListener->clone(), pickShit);
+            _eventDispatcher->addEventListenerWithSceneGraphPriority(spriteListener->clone(), pickSnow);
+            return true;
+        }
+        return false;
+        };
+
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
+
+    /*=======================’‚¿Ô «π÷ŒÔ=========================*/
 
     schedule(CC_SCHEDULE_SELECTOR(FirstMapScene::update), 1.0f);
 
-    //ÊÄ™Áâ©Ë∑ØÂæÑ‰ø°ÊÅØ
+    //π÷ŒÔ¬∑æ∂–≈œ¢
     road.push_back(Path(RIGHT, 118.f));
     road.push_back(Path(DOWN, 260.f));
     road.push_back(Path(RIGHT, 370.f));
     road.push_back(Path(UP, 260.f));
     road.push_back(Path(RIGHT, 118.f));
 
-    //ÊÄ™Áâ©Ê≥¢Ê¨°‰ø°ÊÅØ
+    //π÷ŒÔ≤®¥Œ–≈œ¢
     waves.push_back(WaveData(FASTMONSTER, 70, 10, 1.f, "firstWave"));
     waves.push_back(WaveData(NORMALMONSTER, 70, 10, 1.f, "secondWave"));
     waves.push_back(WaveData(BIGMONSTER, 100, 2, 3.f, "thirdWave"));
@@ -622,7 +644,7 @@ void FirstMapScene::SpawnWave(const WaveData& wave)
 
 void FirstMapScene::StartWaves()
 {
-    //ÂºÄÂßãÁîüÊàêÊÄ™Áâ©
+    //ø™ º…˙≥…π÷ŒÔ
     SpawnWave(waves[0]);
 }
 
@@ -630,14 +652,32 @@ void FirstMapScene::NextWaveCallback()
 {
     if (round + 1 < waves.size())
     {
-        CCLOG("Current wave completed. Starting next wave.");//ËæìÂá∫ÊèêÁ§∫‰∏ã‰∏ÄÊ≥¢
-        round++; //ËΩÆÊ¨°Âä†‰∏Ä
-        SpawnWave(waves[round - 1]);// ÁîüÊàê‰∏ã‰∏ÄÊ≥¢
+        CCLOG("Current wave completed. Starting next wave.");// ‰≥ˆÃ· æœ¬“ª≤®
+        round++; //¬÷¥Œº”“ª
+        SpawnWave(waves[round - 1]);// …˙≥…œ¬“ª≤®
     }
     else
     {
         //win = 1;
-        CCLOG("All waves completed.");//ÊâÄÊúâÊ≥¢Ê¨°ÁªìÊùü
+        CCLOG("All waves completed.");//À˘”–≤®¥ŒΩ· ¯
     }
 }
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

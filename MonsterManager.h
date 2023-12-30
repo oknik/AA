@@ -9,7 +9,7 @@ class MonsterManager;
 class MonsterManager : public Node
 {
 private:
-    static Vector<Monster*> monsters;  
+    static Vector<Monster*> monsters;
 
 public:
 
