@@ -27,11 +27,11 @@ bool FirstMapScene::init() {
         return false;
     }
 
-    //²¥·ÅÒôÀÖ
+    //æ’­æ”¾éŸ³ä¹
     AudioEngine::stopAll();
     AudioEngine::play2d("PlayBGM.mp3", true);
 
-    //±³¾°Í¼
+    //èƒŒæ™¯å›¾
     auto sprite = Sprite::create("SelectBG.png");
     if (sprite == nullptr)
     {
@@ -43,7 +43,7 @@ bool FirstMapScene::init() {
         this->addChild(sprite, 0);
     }
 
-    //Â·¾¶Í¼
+    //è·¯å¾„å›¾
     auto path = Sprite::create("Path1.png");
     if (path == nullptr)
     {
@@ -51,12 +51,12 @@ bool FirstMapScene::init() {
     }
     else
     {
-        path->setScale(1000.0f / path->getContentSize().width, 600.0f / path->getContentSize().height);//ÉèÖÃÍ¼Æ¬´óÐ¡£¬Òª¸úÔËÐÐ¿ò¶ÔÓ¦
+        path->setScale(1000.0f / path->getContentSize().width, 600.0f / path->getContentSize().height);//è®¾ç½®å›¾ç‰‡å¤§å°ï¼Œè¦è·Ÿè¿è¡Œæ¡†å¯¹åº”
         path->setPosition(Vec2(500, 300));
         this->addChild(path, 0);
     }
 
-    //¶¥²¿×´Ì¬À¸
+    //é¡¶éƒ¨çŠ¶æ€æ 
     auto upBoard = Sprite::create("UpBoard.png");
     if (upBoard == nullptr)
     {
@@ -79,7 +79,7 @@ bool FirstMapScene::init() {
         this->addChild(upBoard2, 0);
     }
 
-    //½ð±ÒÍ¼±ê
+    //é‡‘å¸å›¾æ ‡
     auto moneyLabel = Label::createWithTTF(StringUtils::format("%d", money), "fonts/Marker Felt.ttf", 24);
     if (moneyLabel) {
         moneyLabel->setPosition(Vec2(200, 575));
@@ -98,7 +98,7 @@ bool FirstMapScene::init() {
         CCLOG("Error creating Label");
     }
 
-    //¸÷ÖÖÕÏ°­Îï
+    //å„ç§éšœç¢ç‰©
     auto tree1 = Tree::createTree();
     tree1->setPosition(Vec2(194, 374));
     this->addChild(tree1);
@@ -167,7 +167,7 @@ bool FirstMapScene::init() {
     HP->setPosition(Vec2(810, 520));
     this->addChild(HP);
 
-    //ÂÜ²·Éý¼¶°´Å¥
+    //èåœå‡çº§æŒ‰é’®
     auto HPLabel = Label::createWithTTF(StringUtils::format("%d", carrot->hp), "fonts/Marker Felt.ttf", 10);
     if (HPLabel == nullptr) {
         CCLOG("Error creating HP Label");
@@ -180,9 +180,9 @@ bool FirstMapScene::init() {
         if (money >= 500) {
             carrot->hp += 1;
             money -= 500;
-            carrot->updateCarrotSprite();//ÐÞ¸ÄÂÜ²·Í¼°¸
+            carrot->updateCarrotSprite();//ä¿®æ”¹èåœå›¾æ¡ˆ
             HPLabel->setString(StringUtils::format("%d", carrot->hp));
-            moneyLabel->setString(StringUtils::format("%d", money));//ÐÞ¸ÄmoneyLable
+            moneyLabel->setString(StringUtils::format("%d", money));//ä¿®æ”¹moneyLable
             AudioEngine::play2d("Select.mp3", false);
         }
         else {
@@ -208,10 +208,10 @@ bool FirstMapScene::init() {
         CCLOG("Error creating HP Button");
     }
 
-    //¶¨ÒåÓÐÐ§µÄ²Ù×÷·¶Î§£¨£¿£¿£¿£©
-    Rect validArea = Rect(100, 100, 800, 400);  //ÓÐÐ§·¶Î§£¬ÔÚ·¶Î§ÄÚ¿ÉÒÔ·ÅÖÃÅÚËþ
+    //å®šä¹‰æœ‰æ•ˆçš„æ“ä½œèŒƒå›´ï¼ˆï¼Ÿï¼Ÿï¼Ÿï¼‰
+    Rect validArea = Rect(100, 100, 800, 400);  //æœ‰æ•ˆèŒƒå›´ï¼Œåœ¨èŒƒå›´å†…å¯ä»¥æ”¾ç½®ç‚®å¡”
 
-    //´´½¨Ñ¡ÔñÅÚÌ¨Ê±µÄ¶¨Î»°×¿ò
+    //åˆ›å»ºé€‰æ‹©ç‚®å°æ—¶çš„å®šä½ç™½æ¡†
     auto blank = Sprite::create("blank.png");
     if (blank == nullptr) {
         problemLoading("'blank.png'");
@@ -220,9 +220,9 @@ bool FirstMapScene::init() {
         this->addChild(blank, 0);
         blank->setVisible(false);
     }
-    blank->setScale(0.6); //ÖØÐÂµ÷Õû°×¿ò´óÐ¡
+    blank->setScale(0.6); //é‡æ–°è°ƒæ•´ç™½æ¡†å¤§å°
 
-    //´´½¨ÅÚÌ¨Ñ¡Ôñ½çÃæ
+    //åˆ›å»ºç‚®å°é€‰æ‹©ç•Œé¢
     auto pickBottle = Sprite::create("pickbottle.png");
     if (pickBottle == nullptr) {
         problemLoading("'pickbottle.png'");
@@ -240,7 +240,7 @@ bool FirstMapScene::init() {
         this->addChild(pickShit, 0);
         pickShit->setVisible(false);
     }
-    pickShit->setScale(0.6); //ÖØÐÂµ÷Õû´óÐ¡
+    pickShit->setScale(0.6); //é‡æ–°è°ƒæ•´å¤§å°
 
     auto pickSnow = Sprite::create("picksnow.png");
     if (pickSnow == nullptr) {
@@ -250,89 +250,78 @@ bool FirstMapScene::init() {
         this->addChild(pickSnow, 0);
         pickSnow->setVisible(false);
     }
-    pickSnow->setScale(0.6); //ÖØÐÂµ÷Õû´óÐ¡
+    pickSnow->setScale(0.6); //é‡æ–°è°ƒæ•´å¤§å°
 
-    /**********************************ÏÔÊ¾²»³öÀ´²»ÖªµÀÎÊÌâ³öÔÚÄÄ£¬»¹Òª¸Ä½øTowerÀà
-    Tower* bottle = Tower::create(Vec2(500, 300), BOTTLE);
-    if (bottle)
-        this->addChild(bottle);
-    ***********************************/
+//è¿™é‡Œå¼€å§‹æ˜¯æ–°æ”¹çš„ï¼Œè¦†ç›–ä¹‹å‰çš„å³å¯ï¼
 
-    //¼àÌýÆ÷,¸ú×ÙÊó±êÎ»ÖÃ£¬ÔÚµã»÷Ê±ÏÔÊ¾Ñ¡ÔñÅÚÌ¨µÄ¶¨Î»°×¿ò
-    auto listener = EventListenerTouchOneByOne::create();
-    listener->onTouchBegan = [blank, pickBottle, pickShit, pickSnow, validArea, this](Touch* touch, Event* event) {
-        Vec2 touchPos = touch->getLocation();
-        if (!blank->isVisible()) { //µ±Ñ¡Ôñ¿ò²»¿É¼ûÊ±
-            if (validArea.containsPoint(touchPos)) { //ÈôÔÚ·¶Î§ÄÚ£¬ÏÔÊ¾ÅÚÌ¨Ñ¡Ïî
-                blank->setPosition(Vec2(touchPos.x, touchPos.y));
-                blank->setVisible(true);
-                pickBottle->setPosition(Vec2(touchPos.x, touchPos.y + 45));
-                pickBottle->setVisible(true);
-                pickShit->setPosition(Vec2(touchPos.x - 45, touchPos.y + 45));
-                pickShit->setVisible(true);
-                pickSnow->setPosition(Vec2(touchPos.x + 45, touchPos.y + 45));
-                pickSnow->setVisible(true);
-            }
-            else {  //Èô²»ÔÚ·¶Î§ÄÚ£¬²¥·Å´íÎóÒôÐ§£¬²»ÏÔÊ¾Ñ¡Ïî
-                blank->setVisible(false);
-                pickBottle->setVisible(false);
-                pickShit->setVisible(false);
-                pickSnow->setVisible(false);
-                AudioEngine::play2d("Wrong.mp3", false);
-                return false;
-            }
-        }
-        else {//µ±Ñ¡Ôñ¿ò¿É¼ûÊ±
-            Vec2 choice = touch->getLocation();
-            if (pickBottle->getBoundingBox().containsPoint(choice)) {  //Ñ¡ÖÐÆ¿×ÓÅÚ
-                Vec2 blankPos = blank->getPosition();
-                auto bottle = Sprite::create("bottle1.png");
-                if (bottle == nullptr) {
-                    problemLoading("'bottle1.png'");
-                }
-                else {
-                    bottle->setPosition(blankPos);
-                    blank->setVisible(false);
-                    pickBottle->setVisible(false);
-                    pickShit->setVisible(false);
-                    pickSnow->setVisible(false);
-                    this->addChild(bottle, 0);
-                }
-            }
-            if (pickShit->getBoundingBox().containsPoint(choice)) {  //Ñ¡ÖÐ±ã±ã
-                Vec2 blankPos = blank->getPosition();
-                auto shit = Sprite::create("shit1.png");
-                if (shit == nullptr) {
-                    problemLoading("'shit1.png'");
-                }
-                else {
-                    shit->setPosition(blankPos);
-                    blank->setVisible(false);
-                    pickBottle->setVisible(false);
-                    pickShit->setVisible(false);
-                    pickSnow->setVisible(false);
-                    this->addChild(shit, 0);
-                }
-            }
-            if (pickSnow->getBoundingBox().containsPoint(choice)) {  //Ñ¡ÖÐÑ©»¨
-                Vec2 blankPos = blank->getPosition();
-                auto snow = Sprite::create("snow1.png");
-                if (snow == nullptr) {
-                    problemLoading("'snow1.png'");
-                }
-                else {
-                    snow->setPosition(blankPos);
-                    blank->setVisible(false);
-                    pickBottle->setVisible(false);
-                    pickShit->setVisible(false);
-                    pickSnow->setVisible(false);
-                    this->addChild(snow, 0);
-                }
-            }
-        }
-        return true;
-        };
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+ //ç›‘å¬å™¨,è·Ÿè¸ªé¼ æ ‡ä½ç½®ï¼Œåœ¨ç‚¹å‡»æ—¶æ˜¾ç¤ºé€‰æ‹©ç‚®å°çš„å®šä½ç™½æ¡†
+ auto listener = EventListenerTouchOneByOne::create();
+ listener->onTouchBegan = [blank, pickBottle, pickShit, pickSnow, validArea, this](Touch* touch, Event* event) {
+     Vec2 touchPos = touch->getLocation();
+     if (!blank->isVisible()) { //å½“é€‰æ‹©æ¡†ä¸å¯è§æ—¶
+         if (validArea.containsPoint(touchPos)) { //è‹¥åœ¨èŒƒå›´å†…ï¼Œæ˜¾ç¤ºç‚®å°é€‰é¡¹
+             blank->setPosition(Vec2(touchPos.x, touchPos.y));
+             blank->setVisible(true);
+             pickBottle->setPosition(Vec2(touchPos.x, touchPos.y + 45));
+             pickBottle->setVisible(true);
+             pickShit->setPosition(Vec2(touchPos.x - 45, touchPos.y + 45));
+             pickShit->setVisible(true);
+             pickSnow->setPosition(Vec2(touchPos.x + 45, touchPos.y + 45));
+             pickSnow->setVisible(true);
+         }
+         else {  //è‹¥ä¸åœ¨èŒƒå›´å†…ï¼Œæ’­æ”¾é”™è¯¯éŸ³æ•ˆï¼Œä¸æ˜¾ç¤ºé€‰é¡¹
+             blank->setVisible(false);
+             pickBottle->setVisible(false);
+             pickShit->setVisible(false);
+             pickSnow->setVisible(false);
+             AudioEngine::play2d("Wrong.mp3", false);
+             return false;
+         }
+     }
+     else {//å½“é€‰æ‹©æ¡†å¯è§æ—¶
+         Vec2 choice = touch->getLocation();
+         if (pickBottle->getBoundingBox().containsPoint(choice)) {  //é€‰ä¸­ç“¶å­ç‚®
+             Vec2 blankPos = blank->getPosition();
+             auto bottle = Tower::create(blankPos,BOTTLE);
+             if (bottle == nullptr) {
+                 CCLOG("failed to construct a bottle");
+             }
+             else {
+                 bottle->setPosition(blankPos);
+                 this->addChild(bottle, 2);
+             }
+         }
+         if (pickShit->getBoundingBox().containsPoint(choice)) {  //é€‰ä¸­ä¾¿ä¾¿
+             Vec2 blankPos = blank->getPosition();
+             auto shit = Tower::create(blankPos,SHIT);
+             if (shit == nullptr) {
+                 CCLOG("failed to construct a shit");
+             }
+             else {
+                 shit->setPosition(blankPos);
+                 this->addChild(shit, 2);
+             }
+         }
+         if (pickSnow->getBoundingBox().containsPoint(choice)) {  //é€‰ä¸­é›ªèŠ±
+             Vec2 blankPos = blank->getPosition();
+             auto snow = Tower::create(blankPos,SNOW);
+             if (snow == nullptr) {
+                 CCLOG("failed to construct a snow");
+             }
+             else {
+                 snow->setPosition(blankPos);
+                 this->addChild(snow, 2);
+                 snow->setScale(0.8);
+             }
+         }
+         blank->setVisible(false);
+         pickBottle->setVisible(false);
+         pickShit->setVisible(false);
+         pickSnow->setVisible(false);
+     }
+     return true;
+     };
+ _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
     return true;
 }
